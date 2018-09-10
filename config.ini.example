@@ -1,0 +1,38 @@
+[DEFAULT]
+archive_directory_root = D:\Archive
+ue_root_folder = F:\Epic\UE_4.20
+project_dir = F:\Projects\MyProject
+project_name = MyProject
+backup_directory_root = F:\Versions
+
+[CONFIG_OVERRIDES]
+Demo_version_number = Demo
+Switch_deploy_device = Switch@192.168.0.1
+PS4_deploy_device = PS4@192.168.0.1
+
+[REGIONS]
+PS4Regions = [ "Europe", "US" ]
+PS4DefaultRegion = Europe
+PS4Region_Europe = PS4_TitleId_Europe
+PS4Region_US = PS4_TitleId_US
+
+SwitchRegions = [ "Europe", "Japan" ]
+SwitchDefaultRegion = Europe
+SwitchRegion_Europe = Switch_TitleId_Europe
+SwitchRegion_Japan = Switch_TitleId_Japan
+SwitchRegion_Demo_Europe = Switch_Demo_TitleId_Europe
+SwitchRegion_Demo_Japan = Switch_Demo_TitleId_Japan
+
+[DEFINES]
+Defines_Demo = [ "Define_Demo=True" ]
+Defines_PS4 = [ "Define_PS4=True" ]
+Defines_Development = [ "Define_Dev=True" ]
+
+Defines_Demo_PS4 = [ "Define_Demo_PS4=True" ]
+Defines_Demo_Development = [ "Define_Demo_Dev=True" ]
+
+Defines_Demo_PS4_Development = [ "Define_Demo_PS4_Development=True" ]
+
+Defines_PS4_Development = [ "Define_PS4_Dev=True" ]
+
+Defines_Demo_Switch = [ "Define_Demo_Switch=True" ]
