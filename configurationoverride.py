@@ -1,3 +1,5 @@
+import helpers
+
 class ConfigurationOverride( object ):
     def __init__( self, args, config ):
         self.config = config
@@ -6,7 +8,7 @@ class ConfigurationOverride( object ):
         self.updated_values = {}
 
         if not self.config.has_section( self.section_name ):
-            print( f"No {self.section_name} section found in the ini file" )
+            helpers.PrintIsolatedMessage( f"No {self.section_name} section found in the ini file" )
             return
 
         for argument, value in args.__dict__.items():

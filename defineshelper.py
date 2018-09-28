@@ -1,4 +1,5 @@
 import json
+import helpers
 
 class DefinesHelper( object ):
     DefinesArguments = []
@@ -10,7 +11,7 @@ class DefinesHelper( object ):
         self.defines_section = "DEFINES"
 
         if not self.config.has_section( self.defines_section ):
-            print( "No DEFINES section found in the ini file" )
+            helpers.PrintIsolatedMessage( "No DEFINES section found in the ini file" )
             return
 
         self.__TryAddDefineForOption( f"Defines_{args.build_option}" )

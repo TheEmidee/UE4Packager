@@ -19,3 +19,8 @@ def PrintError( error_message ):
 def PrintErrorAndQuit( error_message ):
     PrintError( error_message )
     quit()
+
+def PrintIsolatedMessage( message ):
+    print()
+    print( message )
+    print()
