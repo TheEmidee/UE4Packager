@@ -16,7 +16,7 @@ import helpers
 
 parser = configargparse.ArgParser( ignore_unknown_config_file_keys=True )
 parser.add( 'action', action="store", choices=[ "BuildEditor", "Build", "Cook", "BuildCook", "BuildCookArchive", "Patch" ] )
-parser.add( 'platform', action="store", choices=[ "Win64", "XboxOne", "PS4", "Switch" ] )
+parser.add( 'platform', action="store" )
 parser.add( 'configuration', action="store", choices=[ "Development", "Debug", "Shipping" ] )
 parser.add( '-c', '--config', required=True, is_config_file=True, help='config file path')
 parser.add( '--stub', action="store_true", dest="stub" )
