@@ -26,6 +26,7 @@ parser.add( "--project_name", action="store", dest="project_name", default="" )
 parser.add( "--archive_directory_root", action="store", dest="archive_directory_root", default="" )
 parser.add( "--region", action="store", dest="region", default="" )
 parser.add( "--backup_version", action="store_true", dest="backup_version" )
+parser.add( "--no_backup_version", action="store_true", dest="no_backup_version", help='Force disable backup. Useful if you enabled backup in the config.ini but want to disable it locally' )
 parser.add( "--backup_directory_root", action="store", dest="backup_directory_root", default="" )
 parser.add( "--version_number", action="store", dest="version_number", default="" )
 parser.add( "--patch_base_version_number", action="store", dest="patch_base_version_number", default="" )
@@ -56,6 +57,10 @@ function_caller = functioncaller.FunctionCaller( args )
 function_caller.CallCustomInitialize( args, config )
 
 defines_helper = defineshelper.DefinesHelper( config, args )
+
+if args.no_backup_version:
+    args.backup_version = False
+    helpers.PrintIsolatedMessage( "Force NO Backup" )
 
 try:
     platform_region_helper = platformregionhelper.PlatformRegionHelper( config, args )
