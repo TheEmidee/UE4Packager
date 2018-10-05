@@ -1,5 +1,4 @@
 import os
-
 import helpers
 
 class Platform( object ):
@@ -8,9 +7,9 @@ class Platform( object ):
     Name = ""
     TitleId = ""
     
-    def __init__( self, platform_region_helper ):
+    def __init__( self, platform_region_helper, host ):
         self.platform_region_helper = platform_region_helper
-
+        self.host = host
         self.TitleId = platform_region_helper.TitleId
 
     def GetPackagedFolderName( self ):
@@ -32,7 +31,8 @@ class Platform( object ):
     def __CopyPlatformTitleIdConfig( self, path_resolver, title_id ):
         config_dir = self.__GetPlatformConfigFolderPath( path_resolver )
         title_id_config_dir = os.path.join( config_dir, title_id )
-        helpers.StartProcess( "xcopy", [ "/y", title_id_config_dir + "\*.*", config_dir ] )
+
+        self.host.CopyFiles( title_id_config_dir + "\*.*", config_dir )
 
     def __GetPlatformConfigFolderPath( self, path_resolver ):
         return os.path.join( path_resolver.GetConfigFolderPath(), self.__GetConfigFolderName() )
@@ -41,17 +41,17 @@ class Platform( object ):
         return self.Name
 
 class PlatformWin64( Platform ):
-    def __init__( self, platform_region_helper ):
-        super( PlatformWin64, self ).__init__( platform_region_helper )
+    def __init__( self, platform_region_helper, host ):
+        super( PlatformWin64, self ).__init__( platform_region_helper, host )
         self.Name = "Win64"
 
 class PlatformPS4( Platform ):
-    def __init__( self, platform_region_helper ):
+    def __init__( self, platform_region_helper, host ):
         self.Name = "PS4"
         self.CanBePatched = True
         self.CanCompressData = False
 
-        super( PlatformPS4, self ).__init__( platform_region_helper )
+        super( PlatformPS4, self ).__init__( platform_region_helper, host )
 
     def PreExecute( self, args, path_resolver ):
         super( PlatformPS4, self ).PreExecute( args, path_resolver )
@@ -68,20 +68,21 @@ class PlatformPS4( Platform ):
     def __CopySceSys( self, project_dir, title_id ):
         sce_folder_path = os.path.join( project_dir, "Build", "PS4", "sce_sys" )
         title_id_sce_dir = os.path.join( sce_folder_path, title_id )
-        helpers.StartProcess( "xcopy", [ "/y", title_id_sce_dir + "\*.*", sce_folder_path ] )
+
+        self.host.CopyFiles( title_id_sce_dir + "\*.*", sce_folder_path )
 
 class PlatformXboxOne( Platform ):
-    def __init__( self, platform_region_helper ):
+    def __init__( self, platform_region_helper, host ):
         self.Name = "XboxOne"
 
-        super( PlatformXboxOne, self ).__init__( platform_region_helper )
+        super( PlatformXboxOne, self ).__init__( platform_region_helper, host )
 
 class PlatformSwitch( Platform ):
-    def __init__( self, platform_region_helper ):
+    def __init__( self, platform_region_helper, host ):
         self.Name = "Switch"
         self.CanBePatched = True
 
-        super( PlatformSwitch, self ).__init__( platform_region_helper )
+        super( PlatformSwitch, self ).__init__( platform_region_helper, host )
 
     def PreExecute( self, args, path_resolver ):
         super( PlatformSwitch, self ).PreExecute( args, path_resolver )
@@ -98,16 +99,16 @@ class PlatformSwitch( Platform ):
     def __CopyResources( self, path_resolver, title_id ):
         resources_path = os.path.join( self.GetPlatformBuildFolderPath( path_resolver ), "Resources" )
         title_id_resources_dir = os.path.join( resources_path, title_id )
-        helpers.StartProcess( "xcopy", [ "/y", title_id_resources_dir + "\*.*", resources_path ] )
+        self.host.CopyFiles( title_id_resources_dir + "\*.*", resources_path )
 
 class PlatformFactory( object ):
     @staticmethod
-    def CreatePlatform( platform_name, platform_region_helper ):
+    def CreatePlatform( platform_name, platform_region_helper, host ):
         if platform_name == 'Win64':
-            return PlatformWin64( platform_region_helper )
+            return PlatformWin64( platform_region_helper, host )
         elif platform_name == 'PS4':
-            return PlatformPS4( platform_region_helper )
+            return PlatformPS4( platform_region_helper, host )
         elif platform_name == 'XboxOne':
-            return PlatformXboxOne( platform_region_helper )
+            return PlatformXboxOne( platform_region_helper, host )
         elif platform_name == 'Switch':
-            return PlatformSwitch( platform_region_helper )
+            return PlatformSwitch( platform_region_helper, host )

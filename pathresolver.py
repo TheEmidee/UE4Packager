@@ -2,8 +2,9 @@ import os
 import re
 
 class PathResolver( object ):
-    def __init__( self, args ):
+    def __init__( self, args, host ):
         self.args = args
+        self.host = host
 
     def GetArchiveDirectory( self ):
         result = os.path.join( self.args.archive_directory_root, self.args.configuration, self.args.version_number )
@@ -23,7 +24,7 @@ class PathResolver( object ):
         return os.path.join( self.args.project_dir, "Build" )
 
     def GetRunUATPath( self ):
-        return os.path.join( self.args.ue_root_folder, "Engine\\Build\\BatchFiles\\RunUAT.bat" )
+        return os.path.join( self.args.ue_root_folder, self.host.GetRunUATPath() )
 
     def GetUnrealBuildToolPath( self ):
-        return os.path.join( self.args.ue_root_folder, "Engine\\Binaries\\DotNET\\UnrealBuildTool.exe" )
+        return os.path.join( self.args.ue_root_folder, self.host.GetUnrealBuildToolPath() )

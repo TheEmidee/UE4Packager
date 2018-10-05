@@ -156,4 +156,4 @@ py.exe .\UE4Packager\packager.py BuildCookArchive Switch Shipping -c config.ini 
 ## Additional notes
 
 Some few things to note, and which do not fit the above sections:
-...
+* The packager has only been successfully used on a Windows Host. There exist a Linux and OSX abstraction in the `host.py` file, but was never used. I'll happily accept pull requests to fix any errors :)

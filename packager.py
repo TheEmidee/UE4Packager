@@ -13,6 +13,7 @@ import defineshelper
 import functioncaller
 import configurationoverride
 import helpers
+import host
 
 parser = configargparse.ArgParser( ignore_unknown_config_file_keys=True )
 parser.add( 'action', action="store", choices=[ "BuildEditor", "Build", "Cook", "BuildCook", "BuildCookArchive", "Patch" ] )
@@ -51,6 +52,7 @@ if globals.STUB:
 config = configparser.ConfigParser()
 config.read( args.config )
 
+host = host.HostFactory.CreateHost()
 configuration_override = configurationoverride.ConfigurationOverride( args, config )
 
 function_caller = functioncaller.FunctionCaller( args )
@@ -64,9 +66,9 @@ if args.no_backup_version:
 
 try:
     platform_region_helper = platformregionhelper.PlatformRegionHelper( config, args )
-    path_resolver = pathresolver.PathResolver( args )
+    path_resolver = pathresolver.PathResolver( args, host )
 
-    platform = platform.PlatformFactory.CreatePlatform( args.platform, platform_region_helper )
+    platform = platform.PlatformFactory.CreatePlatform( args.platform, platform_region_helper, host )
 
     configuration = configuration.ConfigurationFactory.CreateConfiguration( args.configuration )
     configuration.ValidateParameters( args )
@@ -74,7 +76,7 @@ try:
     action = action.ActionFactory.CreateAction( args.action, platform, configuration, path_resolver, defines_helper, args )
     action.ValidateParameters()
 
-    backup = backup.Backup( args, path_resolver, platform )
+    backup = backup.Backup( args, path_resolver, host, platform )
     backup.ValidateParameters()
 
 except Exception as e:
