@@ -72,6 +72,7 @@ class ActionCook( Action ):
             "-cook",
             "-unversionedcookedcontent",
             "-package",
+            "-pak"
         ]
 
         if self.platform.CanCompressData:
