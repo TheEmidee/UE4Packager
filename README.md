@@ -23,7 +23,8 @@ Some options worth noting:
 
 * `--backup_version` : if set, the packager will use RoboCopy to copy the output located in the archive directory to a backup location of your choice (defined by the argument --backup_directory_root).
 * `--stub` : if set, the packager won't run any action, but will output in the console the processes it should use, with the arguments. This is useful to check if everything is allright before running the packager for real.
-* `--build_option` : if set, you define an option which can affect the packaging process globally. It can be used to select a particular in regions, add specific C++ defines, or call custom functions (see below)
+* `--build_option` : if set, you define an option which can affect the packaging process globally. It can be used to select a particular in regions, add specific C++ defines, or call custom functions (see below). Please note that if you set this function, the archive directory will be updated from 
+`archive_directory_root\configuration\version_number` to `archive_directory_root\configuration\version_number\build_option`.
 
 As a convenience, you will find some batch files in the `samples` folder which will call `package.py` with predefined options to quickly use the packager.
 

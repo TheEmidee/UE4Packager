@@ -6,7 +6,12 @@ class PathResolver( object ):
         self.args = args
 
     def GetArchiveDirectory( self ):
-        return os.path.join( self.args.archive_directory_root, self.args.configuration, self.args.version_number )
+        result = os.path.join( self.args.archive_directory_root, self.args.configuration, self.args.version_number )
+
+        if self.args.build_option:
+            result = os.path.join( result, self.args.build_option )
+
+        return result
 
     def GetProjectPath( self ):
         return os.path.join( self.args.project_dir, self.args.project_name + ".uproject" )
