@@ -32,7 +32,7 @@ class Platform( object ):
         config_dir = self.__GetPlatformConfigFolderPath( path_resolver )
         title_id_config_dir = os.path.join( config_dir, title_id )
 
-        self.host.CopyFiles( title_id_config_dir + "\*.*", config_dir )
+        self.host.CopyFiles( title_id_config_dir, config_dir )
 
     def __GetPlatformConfigFolderPath( self, path_resolver ):
         return os.path.join( path_resolver.GetConfigFolderPath(), self.__GetConfigFolderName() )
@@ -69,7 +69,7 @@ class PlatformPS4( Platform ):
         sce_folder_path = os.path.join( project_dir, "Build", "PS4", "sce_sys" )
         title_id_sce_dir = os.path.join( sce_folder_path, title_id )
 
-        self.host.CopyFiles( title_id_sce_dir + "\*.*", sce_folder_path )
+        self.host.CopyFiles( title_id_sce_dir, sce_folder_path )
 
 class PlatformXboxOne( Platform ):
     def __init__( self, platform_region_helper, host ):
@@ -99,7 +99,7 @@ class PlatformSwitch( Platform ):
     def __CopyResources( self, path_resolver, title_id ):
         resources_path = os.path.join( self.GetPlatformBuildFolderPath( path_resolver ), "Resources" )
         title_id_resources_dir = os.path.join( resources_path, title_id )
-        self.host.CopyFiles( title_id_resources_dir + "\*.*", resources_path )
+        self.host.CopyFiles( title_id_resources_dir, resources_path )
 
 class PlatformFactory( object ):
     @staticmethod

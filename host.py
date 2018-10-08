@@ -1,5 +1,6 @@
 from sys import platform
 import helpers
+import subprocess
 
 class Host( object ):
     def GetRunUATPath( self ):
@@ -35,6 +36,17 @@ class HostWindows( Host ):
         return "robocopy"
     def GetCopyArguments( self ):
         return [ "/E", "/FFT", "/R:3", "/W:10", "/Z", "/NP", "/NDL" ]
+    def CopyFiles( self, source, destination ):
+        print( "Copy files from " + source + " to " + destination )
+        arguments = [ source, destination ]
+        arguments.extend( self.GetCopyArguments() )
+        try:
+            helpers.StartProcess( self.GetCopyExecutable(), arguments )
+        except subprocess.CalledProcessError as e:
+            if e.returncode == 2 or e.returncode == 3:
+                helpers.PrintIsolatedMessage( "robocopy returned exit code {}. Continuing...".format( e.returncode ) )
+            else:
+                raise e
 
 class HostOSX( Host ):
     def GetRunUATPath( self ):
