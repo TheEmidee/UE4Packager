@@ -24,3 +24,11 @@ def PrintIsolatedMessage( message ):
     print()
     print( message )
     print()
+
+def WriteContentToFile( file_path, content ):
+    if globals.STUB:
+        print( "Would write \r\n{0} \r\nin \r\n{1}".format( content, file_path ) )
+    else:
+        f = open( file_path, "w+" )
+        f.write( content )
+        f.close()
