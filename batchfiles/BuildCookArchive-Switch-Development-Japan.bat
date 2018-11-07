@@ -1,1 +1,1 @@
-py.exe .\UE4PythonPackager\packager.py BuildCookArchive Switch Development -c config.ini --backup_version --region Japan
+py.exe .\UE4PythonPackager\packager.py Build+Cook+Archive Switch Development -c config.ini --backup_version --region Japan

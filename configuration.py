@@ -17,11 +17,11 @@ class ConfigurationShipping( Configuration ):
     def __init__( self ):
         self.CookArguments = "-distribution"
     
-    def ValidateParameters( self, args ):
-        if not args.action in [ "BuildCookArchive", "Patch" ]:
-            raise Exception ( "You must use 'BuildCookArchive' or 'Patch' in 'Shipping'" )
-        if not args.version_number:
-            raise Exception ( "You must provide a version_number when using the 'Shipping' configuration" )
+    # def ValidateParameters( self, args ):
+    #     if not args.action in [ "BuildCookArchive", "Patch" ]:
+    #         raise Exception ( "You must use 'BuildCookArchive' or 'Patch' in 'Shipping'" )
+    #     if not args.version_number:
+    #         raise Exception ( "You must provide a version_number when using the 'Shipping' configuration" )
 
 class ConfigurationFactory( object ):
     @staticmethod

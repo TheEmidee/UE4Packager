@@ -16,7 +16,7 @@ import helpers
 import host
 
 parser = configargparse.ArgParser( ignore_unknown_config_file_keys=True )
-parser.add( 'action', action="store", choices=[ "BuildEditor", "Build", "Cook", "BuildCook", "BuildCookArchive", "Patch" ] )
+parser.add( 'actions', action="store" )
 parser.add( 'platform', action="store" )
 parser.add( 'configuration', action="store", choices=[ "Development", "Debug", "Shipping" ] )
 parser.add( '-c', '--config', required=True, is_config_file=True, help='config file path')
@@ -73,7 +73,7 @@ try:
     configuration = configuration.ConfigurationFactory.CreateConfiguration( args.configuration )
     configuration.ValidateParameters( args )
 
-    action = action.ActionFactory.CreateAction( args.action, platform, configuration, path_resolver, defines_helper, args )
+    action = action.Action( args.actions, platform, configuration, path_resolver, defines_helper, args )
     action.ValidateParameters()
 
     backup = backup.Backup( args, path_resolver, host, platform )

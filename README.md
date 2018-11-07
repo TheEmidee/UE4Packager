@@ -9,9 +9,9 @@ And do not hesitate to propose pull requests to fix or improve stuff!
 ## Usage
 
 Call `packager.py` with the following mandatory positional arguments:
-* "BuildEditor", "Build", "Cook", "BuildCook", "BuildCookArchive", "Patch"
-* "Win64", "XboxOne", "PS4", "Switch"
-* "Development", "Debug", "Shipping"
+* "Actions", which is a list of actions to choose in the list [ "Build", "Cook", "Archive", "Patch", "BuildEditor" ] and must be concatenated with the `+` character.
+* "Platform" which must belong to the list [ "Win64", "XboxOne", "PS4", "Switch" ]
+* "Configuration" which must be an item of [ "Development", "Debug", "Shipping" ]
 
 Another mandatory argument is the `-c` argument, which allows you to define an ini file where the script will pick some values which are "fixed" (like the path to the UE4 folder).
 
@@ -150,7 +150,7 @@ You can have a look at the file `custom/demo_switch.py` for a working example.
 Here is an example of the arguments to pass if you have your `config.ini` in the parent folder of the packager scripts folder, and a folder named `PackagerCustomScripts` as a sibling of the packager scripts:
 
 ```
-py.exe .\UE4Packager\packager.py BuildCookArchive Switch Shipping -c config.ini --backup_version --custom_folder PackagerCustomScripts --build_option Demo
+py.exe .\UE4Packager\packager.py Build+Cook+Archive Switch Shipping -c config.ini --backup_version --custom_folder PackagerCustomScripts --build_option Demo
 ```
 
 ## Additional notes

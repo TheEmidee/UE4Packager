@@ -2,14 +2,55 @@ import helpers
 import os
 
 class Action( object ):
-    def __init__( self, platform, configuration, path_resolver, defines_helper, args ):
+    def __init__( self, actions, platform, configuration, path_resolver, defines_helper, args ):
+        self.actions = actions.split( '+' )
         self.platform = platform
         self.configuration = configuration
         self.path_resolver = path_resolver
         self.defines_helper = defines_helper
         self.args = args
+        self.allowed_actions = [ "Build", "Cook", "Archive", "Patch", "BuildEditor" ]
 
-    def GetUATParameters( self ):
+    def ValidateParameters( self ):
+        for i in range ( 0, len( self.actions ) ) :
+            if self.actions[i] not in self.allowed_actions:
+                raise Exception( "Invalid action : {0}".format( self.actions[i] ) )
+
+        if "BuildEditor" in self.actions:
+            if len( self.actions ) > 1:
+                raise Exception( "BuildEditor can be the only action" )
+
+        if "Patch" in self.actions:
+            if not self.platform.CanBePatched:
+                raise Exception ( "The selected platform " + self.platform.Name + " does not allow patches" )
+            if self.args.configuration != "Shipping":
+                raise Exception( "You must build for the configuration 'Shipping' to patch" )
+            if not self.args.patch_base_version_number:
+                raise Exception ( "You must provide a patch base version number when packaging a patch" )
+
+        if self.args.deploy and not self.args.deploy_device:
+            raise Exception( "You must specify a device to deploy your game on when you pass the --deploy argument" )
+
+    def Execute( self ):
+        if "BuildEditor" in self.actions:
+            self.__BuildEditor()
+        else:
+            self.__BuildCookRun()
+
+    def __BuildEditor( self ):
+        unreal_build_tool = self.path_resolver.GetUnrealBuildToolPath()
+        parameters = [ self.args.project_name + "Editor", self.args.platform, self.args.configuration, self.path_resolver.GetProjectPath() ]
+        helpers.StartProcess( unreal_build_tool, parameters )
+
+    def __BuildCookRun( self ):
+        parameters = [ "BuildCookRun" ]
+        parameters.extend( self.__GetUATParameters() )
+        parameters.extend( self.__GetBuildCookRunArguments() )
+        uat = self.path_resolver.GetRunUATPath()
+
+        helpers.StartProcess( uat, parameters )
+
+    def __GetUATParameters( self ):
         result = [
             "-project=" + self.path_resolver.GetProjectPath(),
             "-noP4",
@@ -38,102 +79,40 @@ class Action( object ):
         # $result += " -installed -ue4exe=UE4Editor-Cmd.exe"
 
         return result
-    
-    def GetBuildCookRunArguments( self ):
-        return ""
 
-    def ValidateParameters( self ):
-        if self.args.deploy and not self.args.deploy_device:
-            raise Exception( "You must specify a device to deploy your game on when you pass the --deploy argument" )
+    def __GetBuildCookRunArguments( self ):
+        arguments = []
 
-    def Execute( self ):
-        parameters = [ "BuildCookRun" ]
-        parameters.extend( self.GetUATParameters() )
-        parameters.extend( self.GetBuildCookRunArguments() )
-        uat = self.path_resolver.GetRunUATPath()
+        if "Build" in self.actions:
+            arguments.append( "-build" )
 
-        helpers.StartProcess( uat, parameters )
+        if "Cook" not in self.actions:
+            arguments.append( "-skipcook" )
+        else:
+            arguments.extend( [
+                    self.configuration.CookArguments,
+                    "-allmaps",
+                    "-cook",
+                    "-unversionedcookedcontent",
+                    "-package",
+                    "-pak"
+            ] )
 
-class ActionBuildEditor( Action ):
-    def Execute( self ):
-        unreal_build_tool = self.path_resolver.GetUnrealBuildToolPath()
-        parameters = [ self.args.project_name + "Editor", self.args.platform, self.args.configuration, self.path_resolver.GetProjectPath() ]
-        helpers.StartProcess( unreal_build_tool, parameters )
+            if self.platform.CanCompressData:
+                arguments.append( "-compressed" )
 
-class ActionBuild( Action ):
-    def GetBuildCookRunArguments( self ):
-        return [ "-build", "-skipcook" ]
+        if "Archive" in self.actions:
+            arguments.extend( [ 
+                "-stage", 
+                "-archive", 
+                "-archivedirectory=" + self.path_resolver.GetArchiveDirectory()
+            ] )
 
-class ActionCook( Action ):
-    def GetBuildCookRunArguments( self ):
-        arguments = [
-            self.configuration.CookArguments,
-            "-allmaps",
-            "-cook",
-            "-unversionedcookedcontent",
-            "-package",
-            "-pak"
-        ]
-
-        if self.platform.CanCompressData:
-            arguments.append( "-compressed" )
-        
-        return arguments
-
-class ActionBuildCook( ActionCook ):
-    def GetBuildCookRunArguments( self ):
-        arguments = super().GetBuildCookRunArguments()
-        arguments.append( "-build" )
-        return arguments
-
-class ActionBuildCookArchive( ActionBuildCook ):
-    def GetBuildCookRunArguments( self ):
-        arguments = super().GetBuildCookRunArguments()
-        arguments.extend( [ 
-            "-stage", 
-            "-archive", 
-            "-archivedirectory=" + self.GetArchiveDirectory()
-        ] )
+        if "Patch" in self.actions:
+            arguments.extend( [
+                "-generatepatch",
+                "-basedonreleaseversion=" + self.args.patch_base_version_number,
+                "-basedonreleaseversionroot=" + os.path.join( self.args.archive_directory_root, self.args.configuration )
+            ] )
 
         return arguments
-
-    def GetArchiveDirectory( self ):
-        return self.path_resolver.GetArchiveDirectory()
-
-class ActionPatch( ActionBuildCookArchive ):
-    def GetBuildCookRunArguments( self ):
-        arguments = super().GetBuildCookRunArguments()
-
-        arguments.extend( [
-            "-generatepatch",
-            "-basedonreleaseversion=" + self.args.patch_base_version_number,
-            "-basedonreleaseversionroot=" + os.path.join( self.args.archive_directory_root, self.args.configuration )
-        ] )
-
-        return arguments
-
-    def ValidateParameters( self ):
-        super().ValidateParameters()
-
-        if not self.platform.CanBePatched:
-            raise Exception ( "The selected platform " + self.platform.Name + " does not allow patches" )
-        if self.args.configuration != "Shipping":
-            raise Exception( "You must build for the configuration 'Shipping' to patch" )
-        if not self.args.patch_base_version_number:
-            raise Exception ( "You must provide a patch base version number when packaging a patch" )
-
-class ActionFactory( object ):
-    @staticmethod
-    def CreateAction( action_name, platform, configuration, path_resolver, defines_helper, args ):
-        if action_name == 'BuildEditor':
-            return ActionBuildEditor( platform, configuration, path_resolver, defines_helper, args )
-        if action_name == 'Build':
-            return ActionBuild( platform, configuration, path_resolver, defines_helper, args )
-        elif action_name == 'Cook':
-            return ActionCook( platform, configuration, path_resolver, defines_helper, args )
-        elif action_name == 'BuildCook':
-            return ActionBuildCook( platform, configuration, path_resolver, defines_helper, args )
-        elif action_name == 'BuildCookArchive':
-            return ActionBuildCookArchive( platform, configuration, path_resolver, defines_helper, args )
-        elif action_name == 'Patch':
-            return ActionPatch( platform, configuration, path_resolver, defines_helper, args )

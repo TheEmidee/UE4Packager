@@ -1,1 +1,1 @@
-py.exe .\UE4Packager\packager.py BuildCookArchive PS4 Development -c config.ini --backup_version --region Europe
+py.exe .\UE4Packager\packager.py Build+Cook+Archive PS4 Development -c config.ini --backup_version --region Europe

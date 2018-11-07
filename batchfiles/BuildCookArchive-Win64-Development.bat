@@ -1,1 +1,1 @@
-py.exe .\UE4PythonPackager\packager.py BuildCookArchive Win64 Development -c config.ini --backup_version
+py.exe .\UE4PythonPackager\packager.py Build+Cook+Archive Win64 Development -c config.ini --backup_version
