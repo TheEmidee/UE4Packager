@@ -94,9 +94,11 @@ class Action( object ):
                     "-allmaps",
                     "-cook",
                     "-unversionedcookedcontent",
-                    "-package",
-                    "-pak"
+                    "-package"
             ] )
+
+            if "Archive" in self.actions:
+                arguments.append( "-pak" )
 
             if self.platform.CanCompressData:
                 arguments.append( "-compressed" )
