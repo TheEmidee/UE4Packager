@@ -57,5 +57,5 @@ class FunctionCaller( object ):
     def __TryCallFunction( self, function_name, args, *argv ):
         for module in self.modules:
             if hasattr( module, function_name ):
-                print( f"Call function '{function_name}' from included file '{module.__name__}'" )
+                helpers.PrintIsolatedMessage( f"Call function '{function_name}' from included file '{module.__name__}'" )
                 getattr( module, function_name )( args, *argv )
