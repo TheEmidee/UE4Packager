@@ -2,13 +2,14 @@ import helpers
 import os
 
 class Action( object ):
-    def __init__( self, actions, platform, configuration, path_resolver, defines_helper, args ):
+    def __init__( self, actions, platform, configuration, path_resolver, defines_helper, args, host ):
         self.actions = actions.split( '+' )
         self.platform = platform
         self.configuration = configuration
         self.path_resolver = path_resolver
         self.defines_helper = defines_helper
         self.args = args
+        self.host = host
         self.allowed_actions = [ "Build", "Cook", "Archive" ]
         self.unique_actions = [ "Patch", "BuildEditor", "Release", "DLC" ]
 
@@ -44,6 +45,12 @@ class Action( object ):
         if self.args.deploy and not self.args.deploy_device:
             raise Exception( "You must specify a device to deploy your game on when you pass the --deploy argument" )
 
+        if self.args.backup_version and not "Archive" in self.actions:
+            raise Exception( "You must choose to archive the project in order to backup the version" )
+
+        if self.args.backup_version and not self.args.backup_directory_root:
+            raise Exception( "The parameter backup_directory_root must be set to backup the version" )
+
     def Execute( self ):
         if "BuildEditor" in self.actions:
             self.__BuildEditor()
@@ -62,6 +69,52 @@ class Action( object ):
         uat = self.path_resolver.GetRunUATPath()
 
         helpers.StartProcess( uat, parameters )
+
+        if self.args.backup_version:
+            self.__BackupVersion()
+
+    def __BackupVersion( self ):
+        helpers.PrintIsolatedMessage( "Backup version" )
+
+        source = os.path.join( 
+            self.path_resolver.GetArchiveDirectory(),
+            self.platform.GetPackagedFolderName(),
+            self.platform.TitleId
+            )
+        destination = os.path.join( 
+            self.args.backup_directory_root, 
+            self.args.project_name,
+            self.args.configuration, 
+            self.args.version_number,
+            self.platform.GetPackagedFolderName(),
+            self.platform.TitleId
+            )
+
+        self.__BackupFolder( source, destination )
+
+        if "Release" in self.actions:
+            helpers.PrintIsolatedMessage( "Backup Releases Folder" )
+
+            source = os.path.join( 
+                self.args.project_dir,
+                "Releases",
+                self.args.version_number,
+                self.platform.GetPackagedFolderName(),
+                self.platform.TitleId
+                )
+            destination = os.path.join( 
+                self.args.backup_directory_root, 
+                self.args.project_name,
+                "Releases",
+                self.args.version_number,
+                self.platform.GetPackagedFolderName(),
+                self.platform.TitleId
+                )
+                
+            self.__BackupFolder( source, destination )
+
+    def __BackupFolder( self, source, destination ):
+        self.host.CopyFiles( source, destination )
 
     def __GetUATParameters( self ):
         result = [

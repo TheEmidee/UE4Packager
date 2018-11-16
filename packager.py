@@ -6,7 +6,6 @@ import globals
 import platform
 import configuration
 import action
-import backup
 import pathresolver
 import platformregionhelper
 import defineshelper
@@ -75,12 +74,8 @@ try:
     configuration = configuration.ConfigurationFactory.CreateConfiguration( args.configuration )
     configuration.ValidateParameters( args )
 
-    action = action.Action( args.actions, platform, configuration, path_resolver, defines_helper, args )
+    action = action.Action( args.actions, platform, configuration, path_resolver, defines_helper, args, host )
     action.ValidateParameters()
-
-    backup = backup.Backup( args, path_resolver, host, platform )
-    backup.ValidateParameters()
-
 except Exception as e:
     helpers.PrintErrorAndQuit( str( e ) )
 
@@ -89,9 +84,6 @@ try:
     function_caller.CallCustomPreExecute( args, path_resolver )
 
     action.Execute()
-
-    if args.backup_version:
-        backup.BackupVersion()
 
     platform.PostExecute( args, path_resolver )
     function_caller.CallCustomPostExecute( args, path_resolver )
