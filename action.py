@@ -9,24 +9,37 @@ class Action( object ):
         self.path_resolver = path_resolver
         self.defines_helper = defines_helper
         self.args = args
-        self.allowed_actions = [ "Build", "Cook", "Archive", "Patch", "BuildEditor" ]
+        self.allowed_actions = [ "Build", "Cook", "Archive" ]
+        self.unique_actions = [ "Patch", "BuildEditor", "Release", "DLC" ]
 
     def ValidateParameters( self ):
+        if len( self.actions ) > 1:
+            for i in range ( 0, len( self.actions ) ) :
+                if self.actions[i] in self.unique_actions:
+                        raise Exception( "The action : {0} can be the only action".format( self.actions[i] ) )
+
         for i in range ( 0, len( self.actions ) ) :
-            if self.actions[i] not in self.allowed_actions:
+            if self.actions[i] not in self.allowed_actions and self.actions[i] not in self.unique_actions:
                 raise Exception( "Invalid action : {0}".format( self.actions[i] ) )
 
-        if "BuildEditor" in self.actions:
-            if len( self.actions ) > 1:
-                raise Exception( "BuildEditor can be the only action" )
+        if "Release" in self.actions:
+            if not self.args.version_number:
+                raise Exception( "You must provide a version_number to Release" )
 
         if "Patch" in self.actions:
             if not self.platform.CanBePatched:
                 raise Exception ( "The selected platform " + self.platform.Name + " does not allow patches" )
-            if self.args.configuration != "Shipping":
-                raise Exception( "You must build for the configuration 'Shipping' to patch" )
-            if not self.args.patch_base_version_number:
-                raise Exception ( "You must provide a patch base version number when packaging a patch" )
+            if not self.args.base_version_number:
+                raise Exception ( "You must provide a patch base version number when creating a patch" )
+
+        if "DLC" in self.actions:
+            if not self.args.base_version_number:
+                raise Exception ( "You must provide a base version number when creating a DLC" )
+            if not self.args.dlc_name:
+                raise Exception ( "You must provide a DLC name when creating a DLC" )
+
+        if len( self.actions ) == 1 and self.actions[ 0 ] in self.unique_actions:
+            self.actions.extend( [ "Build", "Cook", "Archive" ] )
 
         if self.args.deploy and not self.args.deploy_device:
             raise Exception( "You must specify a device to deploy your game on when you pass the --deploy argument" )
@@ -118,8 +131,14 @@ class Action( object ):
         if "Patch" in self.actions:
             arguments.extend( [
                 "-generatepatch",
-                "-basedonreleaseversion=" + self.args.patch_base_version_number,
+                "-basedonreleaseversion=" + self.args.base_version_number,
                 "-basedonreleaseversionroot=" + os.path.join( self.args.archive_directory_root, self.args.configuration )
             ] )
+
+        if "DLC" in self.actions:
+            arguments.extend([
+                "-dlcname=" + self.args.dlc_name,
+                "-basedonreleaseversion=" + self.args.base_version_number
+            ])
 
         return arguments
