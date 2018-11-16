@@ -9,7 +9,11 @@ And do not hesitate to propose pull requests to fix or improve stuff!
 ## Usage
 
 Call `packager.py` with the following mandatory positional arguments:
-* "Actions", which is a list of actions to choose in the list [ "Build", "Cook", "Archive", "Patch", "BuildEditor" ] and must be concatenated with the `+` character.
+* "Actions" can either be a concatenation of the following values [ "Build", "Cook", "Archive" ], separated with a **'+'**. 
+
+  It can instead be one of those values [ "Patch", "DLC", "Release" ]. When selecting one of those values, the packager will always *Build*, *Cook* and *Archive* the project. Some additional arguments may be needed to have those actions run successfully.
+  
+  A last possible value is "BuildEditor", which will build the editor DLLs of the game, and is useful to do before actually building or packaging the game.
 * "Platform" which must belong to the list [ "Win64", "XboxOne", "PS4", "Switch" ]
 * "Configuration" which must be an item of [ "Development", "Debug", "Shipping" ]
 
@@ -21,7 +25,7 @@ The script does some sanity checks on the arguments you give to it to make sure 
 
 Some options worth noting:
 
-* `--backup_version` : if set, the packager will use RoboCopy to copy the output located in the archive directory to a backup location of your choice (defined by the argument --backup_directory_root).
+* `--backup_version` : if set, the packager will use a host application to copy the output located in the archive directory to a backup location of your choice (defined by the argument --backup_directory_root). If **Release** was chosen as an action, the **Releases** folder at the root of the project will also be backuped.
 * `--stub` : if set, the packager won't run any action, but will output in the console the processes it should use, with the arguments. This is useful to check if everything is allright before running the packager for real.
 * `--build_option` : if set, you define an option which can affect the packaging process globally. It can be used to select a particular in regions, add specific C++ defines, or call custom functions (see below). Please note that if you set this function, the archive directory will be updated from 
 `archive_directory_root\configuration\version_number` to `archive_directory_root\configuration\version_number\build_option`.
