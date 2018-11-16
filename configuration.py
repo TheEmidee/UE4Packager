@@ -7,15 +7,15 @@ class Configuration( object ):
 
 class ConfigurationDebug( Configuration ):
     def __init__( self ):
-        self.CookArguments = "-iterativecooking"
+        pass
 
 class ConfigurationDevelopment( Configuration ):
     def __init__( self ):
-        self.CookArguments = "-iterativecooking"
+        pass
 
 class ConfigurationShipping( Configuration ):
     def __init__( self ):
-        self.CookArguments = "-distribution"
+        pass
     
     # def ValidateParameters( self, args ):
     #     if not args.action in [ "BuildCookArchive", "Patch" ]:

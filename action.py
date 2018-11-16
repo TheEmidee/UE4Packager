@@ -90,12 +90,17 @@ class Action( object ):
             arguments.append( "-skipcook" )
         else:
             arguments.extend( [
-                    self.configuration.CookArguments,
-                    "-allmaps",
-                    "-cook",
-                    "-unversionedcookedcontent",
-                    "-package"
+                "-allmaps",
+                "-cook",
+                #"-unversionedcookedcontent",
+                "-package"
             ] )
+
+            if "Release" in self.actions:
+                arguments.append( "-distribution" )
+                arguments.append( "-createreleaseversion=" + self.args.version_number )
+            elif not self.args.no_iterative_cooking:
+                arguments.append( "-iterativecooking" )
 
             if "Archive" in self.actions:
                 arguments.append( "-pak" )

@@ -33,6 +33,7 @@ parser.add( "--version_number", action="store", dest="version_number", default="
 parser.add( "--patch_base_version_number", action="store", dest="patch_base_version_number", default="" )
 parser.add( "--compile_automation_scripts", action="store_true", dest="compile_automation_scripts" )
 parser.add( "--no_compile_game_editor", action="store_true", dest="no_compile_game_editor" )
+parser.add( "--no_iterative_cooking", action="store_true", dest="no_iterative_cooking" )
 parser.add( "--custom_folder", action="store", dest="custom_folder" )
 parser.add( "--build_option", action="store", dest="build_option" )
 parser.add( "--deploy", action="store_true", dest="deploy" )
