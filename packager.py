@@ -92,8 +92,8 @@ try:
     if args.backup_version:
         backup.BackupVersion()
 
+    platform.PostExecute( args, path_resolver )
+    function_caller.CallCustomPostExecute( args, path_resolver )
+    
 except Exception as e:
     helpers.PrintError( str( e ) )
-
-platform.PostExecute( args, path_resolver )
-function_caller.CallCustomPostExecute( args, path_resolver )
