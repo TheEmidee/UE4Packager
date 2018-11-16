@@ -45,6 +45,9 @@ class PlatformWin64( Platform ):
         super( PlatformWin64, self ).__init__( platform_region_helper, host )
         self.Name = "Win64"
 
+    def GetPackagedFolderName( self ):
+        return "WindowsNoEditor"
+
 class PlatformPS4( Platform ):
     def __init__( self, platform_region_helper, host ):
         self.Name = "PS4"
