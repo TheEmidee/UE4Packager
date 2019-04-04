@@ -162,7 +162,7 @@ class Action( object ):
                 "-package"
             ] )
 
-            if "Release" in self.actions:
+            if any( a in [ "Release", "Patch" ] for a in self.actions ):
                 arguments.append( "-distribution" )
                 arguments.append( "-createreleaseversion=" + self.args.version_number )
             elif not self.args.no_iterative_cooking:
