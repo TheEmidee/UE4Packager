@@ -1,4 +1,5 @@
 from sys import platform
+from shutil import copyfile
 import helpers
 import subprocess
 
@@ -9,12 +10,17 @@ class Host( object ):
         return ""
     def GetCopyExecutable( self ):
         return ""
-    def GetCopyArguments( self ):
+    def GetCopyFilesArguments( self ):
         return []
-    def CopyFiles( self, source, destination ):
-        print( "Copy files from " + source + " to " + destination )
+    def GetCopyDirectoriesArguments( self ):
+        return []
+    def CopyFile( self, source, destination ):
+        print( "Copy file from " + source + " to " + destination )
+        copyfile( source, destination )
+    def CopyDirectories( self, source, destination ):
+        print( "Copy directories from " + source + " to " + destination )
         arguments = [ source, destination ]
-        arguments.extend( self.GetCopyArguments() )
+        arguments.extend( self.GetCopyDirectoriesArguments() )
         helpers.StartProcess( self.GetCopyExecutable(), arguments )
 
 class HostLinux( Host ):
@@ -24,7 +30,9 @@ class HostLinux( Host ):
         return "Engine/Binaries/Linux/UnrealBuildTool"
     def GetCopyExecutable( self ):
         return "cp"
-    def GetCopyArguments( self ):
+    def GetCopyFilesArguments( self ):
+        return []
+    def GetCopyDirectoriesArguments( self ):
         return []
 
 class HostWindows( Host ):
@@ -34,12 +42,14 @@ class HostWindows( Host ):
         return "Engine\\Binaries\\DotNET\\UnrealBuildTool.exe"
     def GetCopyExecutable( self ):
         return "robocopy"
-    def GetCopyArguments( self ):
+    def GetCopyFilesArguments( self ):
+        return [ "/FFT", "/R:3", "/W:10", "/Z", "/NP" ]
+    def GetCopyDirectoriesArguments( self ):
         return [ "/E", "/FFT", "/R:3", "/W:10", "/Z", "/NP", "/NDL" ]
-    def CopyFiles( self, source, destination ):
-        print( "Copy files from " + source + " to " + destination )
+    def CopyDirectories( self, source, destination ):
+        print( "Copy directories from " + source + " to " + destination )
         arguments = [ source, destination ]
-        arguments.extend( self.GetCopyArguments() )
+        arguments.extend( self.GetCopyDirectoriesArguments() )
         try:
             helpers.StartProcess( self.GetCopyExecutable(), arguments )
         except subprocess.CalledProcessError as e:
@@ -78,7 +88,9 @@ class HostOSX( Host ):
         return "Engine/Binaries/Linux/UnrealBuildTool"
     def GetCopyExecutable( self ):
         return "cp"
-    def GetCopyArguments( self ):
+    def GetCopyFilesArguments( self ):
+        return []
+    def GetCopyDirectoriesArguments( self ):
         return []
 
 class HostFactory( object ):

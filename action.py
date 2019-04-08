@@ -121,7 +121,7 @@ class Action( object ):
             self.__BackupFolder( source, destination )
 
     def __BackupFolder( self, source, destination ):
-        self.host.CopyFiles( source, destination )
+        self.host.CopyDirectories( source, destination )
 
     def __GetUATParameters( self ):
         result = [
