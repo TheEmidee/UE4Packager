@@ -85,9 +85,16 @@ class Action( object ):
             self.args.backup_directory_root, 
             self.args.project_name,
             self.args.configuration, 
-            self.args.version_number,
+            self.args.version_number
+            )
+
+        if self.args.build_option:
+            destination = os.path.join( destination, self.args.build_option )
+
+        destination = os.path.join(
+            destination,
             self.platform.GetPackagedFolderName(),
-            self.platform.TitleId
+            self.platform.TitleId 
             )
 
         self.__BackupFolder( source, destination )
