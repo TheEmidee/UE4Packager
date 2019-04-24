@@ -70,8 +70,8 @@ class Action( object ):
 
         exit_code = helpers.StartProcess( uat, parameters )
 
-        if self.args.backup_version:
-            self.__BackupVersion()
+        if exit_code == 0 and self.args.backup_version:
+            exit_code = self.__BackupVersion()
 
         return exit_code
 
