@@ -79,14 +79,18 @@ try:
 except Exception as e:
     helpers.PrintErrorAndQuit( str( e ) )
 
+exit_code = 0
+
 try:
     platform.PreExecute( args, path_resolver )
     function_caller.CallCustomPreExecute( args, path_resolver )
 
-    action.Execute()
+    exit_code = action.Execute()
 
     platform.PostExecute( args, path_resolver )
     function_caller.CallCustomPostExecute( args, path_resolver )
     
 except Exception as e:
     helpers.PrintError( str( e ) )
+
+sys.exit( exit_code )

@@ -53,14 +53,14 @@ class Action( object ):
 
     def Execute( self ):
         if "BuildEditor" in self.actions:
-            self.__BuildEditor()
+            return self.__BuildEditor()
         else:
-            self.__BuildCookRun()
+            return self.__BuildCookRun()
 
     def __BuildEditor( self ):
         unreal_build_tool = self.path_resolver.GetUnrealBuildToolPath()
         parameters = [ self.args.project_name + "Editor", self.args.platform, self.args.configuration, self.path_resolver.GetProjectPath() ]
-        helpers.StartProcess( unreal_build_tool, parameters )
+        return helpers.StartProcess( unreal_build_tool, parameters )
 
     def __BuildCookRun( self ):
         parameters = [ "BuildCookRun" ]
@@ -68,10 +68,12 @@ class Action( object ):
         parameters.extend( self.__GetBuildCookRunArguments() )
         uat = self.path_resolver.GetRunUATPath()
 
-        helpers.StartProcess( uat, parameters )
+        exit_code = helpers.StartProcess( uat, parameters )
 
         if self.args.backup_version:
             self.__BackupVersion()
+
+        return exit_code
 
     def __BackupVersion( self ):
         helpers.PrintIsolatedMessage( "Backup version" )

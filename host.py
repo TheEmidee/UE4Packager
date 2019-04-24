@@ -21,7 +21,7 @@ class Host( object ):
         print( "Copy directories from " + source + " to " + destination )
         arguments = [ source, destination ]
         arguments.extend( self.GetCopyDirectoriesArguments() )
-        helpers.StartProcess( self.GetCopyExecutable(), arguments )
+        return helpers.StartProcess( self.GetCopyExecutable(), arguments )
 
 class HostLinux( Host ):
     def GetRunUATPath( self ):
@@ -51,7 +51,7 @@ class HostWindows( Host ):
         arguments = [ source, destination ]
         arguments.extend( self.GetCopyDirectoriesArguments() )
         try:
-            helpers.StartProcess( self.GetCopyExecutable(), arguments )
+            return helpers.StartProcess( self.GetCopyExecutable(), arguments )
         except subprocess.CalledProcessError as e:
             if not self.__ProcessReturnCode( e.returncode ):
                 raise e

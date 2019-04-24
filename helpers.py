@@ -7,7 +7,7 @@ def StartProcess( path, arguments ):
         print( arguments )
     else:
         arguments.insert( 0, path )
-        subprocess.check_call( arguments, shell=False )
+        return subprocess.run( arguments, shell=False ).returncode
 
 def PrintError( error_message ):
     print()
