@@ -7,6 +7,7 @@ def StartProcess( path, arguments ):
         print( arguments )
     else:
         arguments.insert( 0, path )
+        print( "StartProcess : " + " ".join( arguments ) )
         return subprocess.run( arguments, shell=False ).returncode
 
 def PrintError( error_message ):
