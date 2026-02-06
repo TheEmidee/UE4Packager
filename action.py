@@ -68,6 +68,7 @@ class Action( object ):
         parameters.extend( self.__GetBuildCookRunArguments() )
         uat = self.path_resolver.GetRunUATPath()
 
+        print(uat)
         exit_code = helpers.StartProcess( uat, parameters )
 
         if exit_code == 0 and self.args.backup_version:
